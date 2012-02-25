@@ -27,7 +27,8 @@
      ;; which would check the facts twice, which is confusing. The following, I
      ;; hope, loads each file at most once.
      (dosync (alter @#'clojure.core/*loaded-libs* difference (set namespaces#)))
-     (doseq [n# namespaces#] (require n#))
+     (doseq [n# namespaces#]
+       (.start (Thread. ((bound-fn [] (require n#))))))
      namespaces#))
 
 (defn- make-report-fn [exit-after-tests?]
